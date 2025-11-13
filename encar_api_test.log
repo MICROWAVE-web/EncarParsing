@@ -1,0 +1,291 @@
+2025-11-12 21:17:35 [INFO] === 🚀 Тест запущен на 10 минут ===
+2025-11-12 21:17:36 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+2025-11-12 21:17:36 [INFO] Cycle 1 завершён за 0.5 сек
+2025-11-12 21:17:38 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+2025-11-12 21:17:38 [INFO] Cycle 2 завершён за 0.6 сек
+2025-11-12 21:17:41 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+2025-11-12 21:17:41 [INFO] Cycle 3 завершён за 0.6 сек
+2025-11-12 21:17:43 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+2025-11-12 21:17:43 [INFO] Cycle 4 завершён за 0.5 сек
+2025-11-12 21:17:46 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+2025-11-12 21:17:46 [INFO] Cycle 5 завершён за 1.1 сек
+2025-11-12 21:17:49 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+2025-11-12 21:17:49 [INFO] Cycle 6 завершён за 0.6 сек
+2025-11-12 21:17:52 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+2025-11-12 21:17:52 [INFO] Cycle 7 завершён за 0.6 сек
+2025-11-12 21:17:54 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+2025-11-12 21:17:54 [INFO] Cycle 8 завершён за 0.5 сек
+2025-11-12 21:17:57 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+2025-11-12 21:17:57 [INFO] Cycle 9 завершён за 0.5 сек
+2025-11-12 21:17:59 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+2025-11-12 21:17:59 [INFO] Cycle 10 завершён за 0.8 сек
+21:19:45 [INFO] === 🚀 Тест запущен на 10 минут ===
+21:19:46 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+21:19:46 [INFO] Cycle 1 завершён за 0.9 сек
+21:20:11 [INFO] === 🚀 Тест запущен на 10 минут ===
+21:20:12 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+21:20:12 [INFO] Cycle 1 завершён за 0.6 сек
+21:20:14 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+21:20:14 [INFO] Cycle 2 завершён за 0.6 сек
+21:20:17 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+21:20:17 [INFO] Cycle 3 завершён за 0.5 сек
+21:20:41 [INFO] === 🚀 Тест запущен на 10 минут ===
+21:20:41 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+21:20:41 [INFO] Cycle 1 завершён за 0.5 сек
+21:20:44 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+21:20:44 [INFO] Cycle 2 завершён за 0.6 сек
+21:22:56 [INFO] === 🚀 Тест запущен на 10 минут ===
+21:22:56 [ERROR] [search] name 'headers' is not defined
+21:22:56 [INFO] Cycle 1 завершён за 0.0 сек
+21:22:58 [ERROR] [search] name 'headers' is not defined
+21:22:58 [INFO] Cycle 2 завершён за 0.0 сек
+21:23:00 [ERROR] [search] name 'headers' is not defined
+21:23:00 [INFO] Cycle 3 завершён за 0.0 сек
+21:23:05 [INFO] === 🚀 Тест запущен на 10 минут ===
+21:23:06 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+21:23:06 [INFO] Cycle 1 завершён за 0.5 сек
+21:23:08 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+21:23:08 [INFO] Cycle 2 завершён за 0.7 сек
+21:23:11 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+21:23:11 [INFO] Cycle 3 завершён за 0.5 сек
+21:23:14 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+21:23:14 [INFO] Cycle 4 завершён за 0.6 сек
+21:24:16 [INFO] === 🚀 Тест запущен на 10 минут ===
+21:24:17 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+21:24:17 [INFO] Cycle 1 завершён за 1.0 сек
+21:24:20 [INFO] === 🚀 Тест запущен на 10 минут ===
+21:24:21 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+21:24:21 [INFO] Cycle 1 завершён за 1.2 сек
+21:30:02 [INFO] === 🚀 Тест запущен на 10 минут ===
+21:30:03 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+21:30:03 [INFO] Cycle 1 завершён за 0.6 сек
+21:30:05 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+21:30:05 [INFO] Cycle 2 завершён за 0.6 сек
+21:32:48 [INFO] === 🚀 Тест запущен на 10 минут ===
+21:32:49 [ERROR] Ошибка запроса: 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+21:32:49 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+21:32:49 [INFO] Cycle 1 завершён за 0.9 сек
+21:32:52 [ERROR] Ошибка запроса: 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+21:32:52 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+21:32:52 [INFO] Cycle 2 завершён за 0.6 сек
+21:32:54 [ERROR] Ошибка запроса: 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+21:32:54 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+21:32:54 [INFO] Cycle 3 завершён за 0.6 сек
+21:36:30 [INFO] === 🚀 Тест запущен на 1 минут ===
+21:36:30 [INFO] Cycle 1: Запрос search_premium
+21:36:31 [INFO] HTTP Status: 407
+21:36:31 [INFO] Response headers: {'Content-Length': '0', 'Connection': 'keep-alive', 'Vary': 'Origin, Access-Control-Request-Method, Access-Control-Request-Headers', 'date': 'Wed, 12 Nov 2025 14:36:30 GMT', 'X-Cache': 'Error from cloudfront', 'Via': '1.1 7d09bc54226d1726b0569e6a8bcc4838.cloudfront.net (CloudFront)', 'X-Amz-Cf-Pop': 'HEL51-P7', 'X-Amz-Cf-Id': 'PBQZ9iiHEBLGR2jO3SJ1z14nIyPZfY8U2KN-8cikqYZQZOcl6hO18w=='}
+21:36:31 [ERROR] Request failed: 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+21:36:31 [ERROR] Response text: 
+21:36:31 [ERROR] [search] HTTPError: 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+21:36:31 [INFO] Cycle 1 завершён за 0.8 сек
+21:36:33 [INFO] Cycle 2: Запрос search_premium
+21:36:34 [INFO] HTTP Status: 407
+21:36:34 [INFO] Response headers: {'Content-Length': '0', 'Connection': 'keep-alive', 'Vary': 'Origin, Access-Control-Request-Method, Access-Control-Request-Headers', 'date': 'Wed, 12 Nov 2025 14:36:33 GMT', 'X-Cache': 'Error from cloudfront', 'Via': '1.1 75f4291192c5049e8954d5f7e2362e22.cloudfront.net (CloudFront)', 'X-Amz-Cf-Pop': 'HEL51-P7', 'X-Amz-Cf-Id': 'I4QGkBu6gaYbEsEgg1ZG_MwPckeG0cAr4bmmgK1mAck3wA4w_whzcQ=='}
+21:36:34 [ERROR] Request failed: 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+21:36:34 [ERROR] Response text: 
+21:36:34 [ERROR] [search] HTTPError: 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+21:36:34 [INFO] Cycle 2 завершён за 0.5 сек
+21:36:36 [INFO] Cycle 3: Запрос search_premium
+21:36:36 [INFO] HTTP Status: 407
+21:36:36 [INFO] Response headers: {'Content-Length': '0', 'Connection': 'keep-alive', 'Vary': 'Origin, Access-Control-Request-Method, Access-Control-Request-Headers', 'date': 'Wed, 12 Nov 2025 14:36:36 GMT', 'X-Cache': 'Error from cloudfront', 'Via': '1.1 472cf725ba42426edb1a574fca923542.cloudfront.net (CloudFront)', 'X-Amz-Cf-Pop': 'HEL51-P7', 'X-Amz-Cf-Id': '5TW50K0OXW7FWJZPbBChMiARjjUwC3j3TY7ENYQJMdOPgU_pfva-zQ=='}
+21:36:36 [ERROR] Request failed: 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+21:36:36 [ERROR] Response text: 
+21:36:36 [ERROR] [search] HTTPError: 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+21:36:36 [INFO] Cycle 3 завершён за 0.6 сек
+21:46:50 [INFO] === 🚀 Тест запущен на 10 минут ===
+21:46:51 [INFO] HTTP Status: 407
+21:46:51 [ERROR] Request failed: 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+21:46:51 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+21:46:51 [INFO] Cycle 1 завершён за 0.5 сек
+21:46:54 [INFO] HTTP Status: 407
+21:46:54 [ERROR] Request failed: 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+21:46:54 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+21:46:54 [INFO] Cycle 2 завершён за 0.8 сек
+21:46:56 [INFO] HTTP Status: 407
+21:46:56 [ERROR] Request failed: 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+21:46:56 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+21:46:56 [INFO] Cycle 3 завершён за 0.5 сек
+22:17:40 [INFO] === 🚀 Тест запущен на 10 минут ===
+22:17:41 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:17:41 [INFO] Cycle 1 завершён за 0.7 сек
+22:17:44 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:17:44 [INFO] Cycle 2 завершён за 0.7 сек
+22:17:46 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:17:46 [INFO] Cycle 3 завершён за 0.5 сек
+22:17:49 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:17:49 [INFO] Cycle 4 завершён за 0.6 сек
+22:17:51 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:17:51 [INFO] Cycle 5 завершён за 0.6 сек
+22:17:54 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:17:54 [INFO] Cycle 6 завершён за 0.6 сек
+22:17:57 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:17:57 [INFO] Cycle 7 завершён за 0.8 сек
+22:17:59 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:17:59 [INFO] Cycle 8 завершён за 0.6 сек
+22:18:02 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:18:02 [INFO] Cycle 9 завершён за 0.5 сек
+22:18:04 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:18:04 [INFO] Cycle 10 завершён за 0.5 сек
+22:18:07 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:18:07 [INFO] Cycle 11 завершён за 0.5 сек
+22:18:10 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:18:10 [INFO] Cycle 12 завершён за 0.8 сек
+22:18:12 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:18:12 [INFO] Cycle 13 завершён за 0.5 сек
+22:18:15 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:18:15 [INFO] Cycle 14 завершён за 0.5 сек
+22:18:17 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:18:17 [INFO] Cycle 15 завершён за 0.6 сек
+22:18:20 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:18:20 [INFO] Cycle 16 завершён за 0.7 сек
+22:18:22 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:18:22 [INFO] Cycle 17 завершён за 0.5 сек
+22:18:25 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:18:25 [INFO] Cycle 18 завершён за 0.8 сек
+22:18:28 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:18:28 [INFO] Cycle 19 завершён за 0.5 сек
+22:18:30 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:18:30 [INFO] Cycle 20 завершён за 0.5 сек
+22:18:33 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:18:33 [INFO] Cycle 21 завершён за 0.5 сек
+22:18:35 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:18:35 [INFO] Cycle 22 завершён за 0.5 сек
+22:18:38 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:18:38 [INFO] Cycle 23 завершён за 0.7 сек
+22:18:41 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:18:41 [INFO] Cycle 24 завершён за 0.5 сек
+22:18:43 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:18:43 [INFO] Cycle 25 завершён за 0.5 сек
+22:18:46 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:18:46 [INFO] Cycle 26 завершён за 0.5 сек
+22:18:48 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:18:48 [INFO] Cycle 27 завершён за 0.5 сек
+22:18:51 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:18:51 [INFO] Cycle 28 завершён за 0.5 сек
+22:18:54 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:18:54 [INFO] Cycle 29 завершён за 0.9 сек
+22:18:56 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:18:56 [INFO] Cycle 30 завершён за 0.5 сек
+22:18:59 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:18:59 [INFO] Cycle 31 завершён за 0.5 сек
+22:19:01 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:19:01 [INFO] Cycle 32 завершён за 0.6 сек
+22:19:04 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:19:04 [INFO] Cycle 33 завершён за 0.5 сек
+22:19:07 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:19:07 [INFO] Cycle 34 завершён за 0.7 сек
+22:19:09 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:19:09 [INFO] Cycle 35 завершён за 0.5 сек
+22:19:12 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:19:12 [INFO] Cycle 36 завершён за 0.6 сек
+22:19:14 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:19:14 [INFO] Cycle 37 завершён за 0.5 сек
+22:19:17 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:19:17 [INFO] Cycle 38 завершён за 0.5 сек
+22:19:19 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:19:19 [INFO] Cycle 39 завершён за 0.8 сек
+22:19:22 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:19:22 [INFO] Cycle 40 завершён за 0.7 сек
+22:19:25 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:19:25 [INFO] Cycle 41 завершён за 0.5 сек
+22:19:27 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:19:27 [INFO] Cycle 42 завершён за 0.5 сек
+22:19:30 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:19:30 [INFO] Cycle 43 завершён за 0.5 сек
+22:19:32 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:19:32 [INFO] Cycle 44 завершён за 0.5 сек
+22:19:35 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:19:35 [INFO] Cycle 45 завершён за 0.6 сек
+22:19:37 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:19:37 [INFO] Cycle 46 завершён за 0.5 сек
+22:19:40 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:19:40 [INFO] Cycle 47 завершён за 0.6 сек
+22:19:42 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:19:42 [INFO] Cycle 48 завершён за 0.5 сек
+22:19:45 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:19:45 [INFO] Cycle 49 завершён за 0.6 сек
+22:19:48 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:19:48 [INFO] Cycle 50 завершён за 0.9 сек
+22:19:50 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:19:50 [INFO] Cycle 51 завершён за 0.5 сек
+22:19:53 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:19:53 [INFO] Cycle 52 завершён за 0.5 сек
+22:19:56 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:19:56 [INFO] Cycle 53 завершён за 0.6 сек
+22:19:58 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:19:58 [INFO] Cycle 54 завершён за 0.5 сек
+22:20:01 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:20:01 [INFO] Cycle 55 завершён за 0.5 сек
+22:20:04 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:20:04 [INFO] Cycle 56 завершён за 0.9 сек
+22:20:06 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:20:06 [INFO] Cycle 57 завершён за 0.5 сек
+22:20:09 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:20:09 [INFO] Cycle 58 завершён за 0.5 сек
+22:20:11 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:20:11 [INFO] Cycle 59 завершён за 0.6 сек
+22:20:14 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:20:14 [INFO] Cycle 60 завершён за 0.6 сек
+22:20:16 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:20:16 [INFO] Cycle 61 завершён за 0.7 сек
+22:20:19 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:20:19 [INFO] Cycle 62 завершён за 0.5 сек
+22:20:21 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:20:21 [INFO] Cycle 63 завершён за 0.5 сек
+22:20:24 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:20:24 [INFO] Cycle 64 завершён за 0.5 сек
+22:20:27 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:20:27 [INFO] Cycle 65 завершён за 1.0 сек
+22:20:31 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:20:31 [INFO] Cycle 66 завершён за 2.3 сек
+22:20:34 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:20:34 [INFO] Cycle 67 завершён за 1.0 сек
+22:20:37 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:20:37 [INFO] Cycle 68 завершён за 0.8 сек
+22:20:40 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:20:40 [INFO] Cycle 69 завершён за 0.8 сек
+22:20:43 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:20:43 [INFO] Cycle 70 завершён за 0.9 сек
+22:20:46 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:20:46 [INFO] Cycle 71 завершён за 1.2 сек
+22:20:49 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:20:49 [INFO] Cycle 72 завершён за 1.0 сек
+22:20:52 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:20:52 [INFO] Cycle 73 завершён за 0.8 сек
+22:20:55 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:20:55 [INFO] Cycle 74 завершён за 0.9 сек
+22:20:58 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:20:58 [INFO] Cycle 75 завершён за 0.9 сек
+22:21:01 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:21:01 [INFO] Cycle 76 завершён за 1.1 сек
+22:21:04 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:21:04 [INFO] Cycle 77 завершён за 0.8 сек
+22:21:06 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:21:06 [INFO] Cycle 78 завершён за 0.9 сек
+22:21:09 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:21:09 [INFO] Cycle 79 завершён за 0.8 сек
+22:21:12 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:21:12 [INFO] Cycle 80 завершён за 0.8 сек
+22:21:15 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:21:15 [INFO] Cycle 81 завершён за 0.9 сек
+22:21:18 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:21:18 [INFO] Cycle 82 завершён за 0.8 сек
+22:21:20 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:21:20 [INFO] Cycle 83 завершён за 0.8 сек
+22:21:23 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:21:23 [INFO] Cycle 84 завершён за 0.8 сек
+22:21:26 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:21:26 [INFO] Cycle 85 завершён за 0.8 сек
+22:21:29 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:21:29 [INFO] Cycle 86 завершён за 1.1 сек
+22:21:32 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:21:32 [INFO] Cycle 87 завершён за 0.8 сек
+22:21:35 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:21:35 [INFO] Cycle 88 завершён за 0.8 сек
+22:21:38 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:21:38 [INFO] Cycle 89 завершён за 0.9 сек
+22:21:40 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:21:40 [INFO] Cycle 90 завершён за 0.8 сек
+22:21:43 [ERROR] [search] 407 Client Error: Proxy Authentication Required for url: https://api.encar.com/search/car/list/premium?count=true&q=%28And.Hidden.N._.CarType.N.%29&sr=%7CModifiedDate%7C20%7C20
+22:21:43 [INFO] Cycle 91 завершён за 0.9 сек

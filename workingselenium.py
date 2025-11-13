@@ -9,6 +9,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.core.os_manager import ChromeType
 
 logging.basicConfig(level=logging.INFO)
 
@@ -54,7 +55,10 @@ def test():
     options.add_argument("--remote-debugging-port=9222")
     # options.add_argument("--headless")  # если на сервере без GUI
 
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+    service = Service(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install())
+
+
+    driver = webdriver.Chrome(service=service, options=options)
 
     try:
 

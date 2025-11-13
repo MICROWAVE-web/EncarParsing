@@ -3,6 +3,9 @@ import os
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+
 import requests
 import time
 import logging
@@ -18,7 +21,6 @@ def save_cookies(cookies):
             "saved_at": time.time(),
             "cookies": cookies
         }, f)
-
 
 
 def load_cookies():
@@ -42,7 +44,7 @@ def test():
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
 
-    driver = webdriver.Chrome(options=options)
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
     try:
 

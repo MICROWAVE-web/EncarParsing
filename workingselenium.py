@@ -1,14 +1,14 @@
 import json
+import logging
 import os
+import time
 
+import requests
+from pyvirtualdisplay import Display
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
-
-import requests
-import time
-import logging
 
 logging.basicConfig(level=logging.INFO)
 
@@ -30,19 +30,28 @@ def load_cookies():
     with open(COOKIES_FILE, "r") as f:
         data = json.load(f)
 
-    # Проверяем не устарели ли куки (берем самый короткий срок - 30 минут)
-    if time.time() - data["saved_at"] > 30 * 60:  # 30 минут
-        logging.info("🕐 Куки устарели (прошло больше 30 минут)")
-        return None
-
     logging.info("✅ Используем сохраненные куки")
     return data["cookies"]
 
+
 def test():
+    # 🎥 Запускаем виртуальный дисплей FullHD
+    display = Display(visible=False, size=(1920, 1080))
+    display.start()
 
     options = Options()
+
+    # 🔧 Отключаем загрузку картинок
+    prefs = {"profile.managed_default_content_settings.images": 2}
+    options.add_experimental_option("prefs", prefs)
+
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--window-size=1920,1080")
+    # options.add_argument("--headless")  # если на сервере без GUI
 
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
@@ -87,4 +96,3 @@ def test():
 
 if __name__ == "__main__":
     test()
-

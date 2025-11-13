@@ -27,10 +27,6 @@ def load_cookies():
     with open(COOKIES_FILE, "r") as f:
         data = json.load(f)
 
-    # Проверяем не устарели ли куки (берем самый короткий срок - 30 минут)
-    if time.time() - data["saved_at"] > 30 * 60:  # 30 минут
-        logging.info("🕐 Куки устарели (прошло больше 30 минут)")
-        return None
 
     logging.info("✅ Используем сохраненные куки")
     return data["cookies"]
@@ -46,26 +42,17 @@ def make_api_request_with_cookies(cookies):
         session.cookies.set(cookie['name'], cookie['value'])
 
     # Заголовки как в браузере
-    session.headers.update({
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        'Accept': 'application/json, text/javascript, */*; q=0.01',
-        'Origin': 'https://www.encar.com',
-        'Referer': 'https://www.encar.com/fc/fc_carsearchlist.do',
-    })
+    session.headers.update({'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'Referer': 'https://www.encar.com/fc/fc_carsearchlist.do?carType=for#!%7B%22action%22%3A%22(And.Hidden.N._.CarType.N.)%22%2C%22toggle%22%3A%7B%7D%2C%22layer%22%3A%22%22%2C%22sort%22%3A%22ModifiedDate%22%2C%22page%22%3A1%2C%22limit%22%3A20%2C%22searchKey%22%3A%22%22%2C%22loginCheck%22%3Afalse%7D'})
 
     api_url = "https://api.encar.com/search/car/list/premium"
-    params = {
-        "count": "true",
-        "q": "(And.Hidden.N._.CarType.N.)",
-        "sr": "|ModifiedDate|20|20"
-    }
+    params = {"count": "true", "q": "(And.Hidden.N._.CarType.N.)", "sr": "|ModifiedDate|40|20"}
 
     try:
         response = session.get(api_url, params=params, timeout=10)
         if response.status_code == 200:
             data = response.json()
             logging.info(f"✅ API успешен! Найдено {len(data.get('SearchResults', []))} авто")
-            return True
+            return data
         else:
             logging.error(f"❌ API ошибка: {response.status_code}")
             return False

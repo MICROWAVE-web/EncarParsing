@@ -79,7 +79,7 @@ def test():
 
 
 
-    if os.system == "linux" and not os.environ.get("DISPLAY"):
+    if os.system == "linux":
         service = Service(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install())
     else:
         service = Service(ChromeDriverManager().install())

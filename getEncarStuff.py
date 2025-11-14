@@ -1,10 +1,10 @@
 import json
 import logging
 import os
+import platform
 import time
 
 import requests
-from pyvirtualdisplay import Display
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
@@ -16,13 +16,7 @@ logging.basicConfig(level=logging.INFO)
 COOKIES_FILE = "encar_cookies.json"
 
 
-import json
-import logging
-import os
-import platform
-import time
 
-import requests
 
 # Запускаем виртуальный дисплей только при необходимости
 def start_virtual_display_if_needed():

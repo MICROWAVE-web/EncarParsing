@@ -10,7 +10,6 @@ from typing import Dict, List, Optional, Set, Tuple
 import requests
 
 COOKIES_FILE = "encar_cookies.json"
-OUTPUT_FILE = "encar_truck_results.json"
 LOG_FILE = "encar_truck_scraper.log"
 DB_FILE = "encar_cars.db"
 
@@ -173,40 +172,6 @@ def fetch_page(
     return results
 
 
-def load_existing_results(logger: logging.Logger) -> Tuple[List[Dict], Set[str]]:
-    if not os.path.exists(OUTPUT_FILE):
-        logger.info("Файл результатов %s не найден, начнем с пустого списка", OUTPUT_FILE)
-        return [], set()
-
-    try:
-        with open(OUTPUT_FILE, "r", encoding="utf-8") as file:
-            data = json.load(file)
-    except (OSError, json.JSONDecodeError) as exc:
-        logger.error("Не удалось прочитать существующие результаты из %s: %s", OUTPUT_FILE, exc)
-        return [], set()
-
-    if not isinstance(data, list):
-        logger.error("Неверный формат в %s, ожидается список", OUTPUT_FILE)
-        return [], set()
-
-    collected: List[Dict] = []
-    seen_ids: Set[str] = set()
-
-    for entry in data:
-        if not isinstance(entry, dict):
-            continue
-
-        raw_id = entry.get("id") if "id" in entry else entry.get("Id")
-        normalized = normalize_car_id(raw_id)
-        if not normalized:
-            continue
-
-        id_str, stored_value = normalized
-        seen_ids.add(id_str)
-        collected.append({"id": stored_value})
-
-    logger.info("Загружено %d существующих записей из %s", len(collected), OUTPUT_FILE)
-    return collected, seen_ids
 
 
 def init_database(logger: logging.Logger) -> None:
@@ -298,13 +263,6 @@ def save_cars_to_db_batch(logger: logging.Logger, cars: List[Dict], collected_at
         return 0
 
 
-def save_results(logger: logging.Logger, cars: List[Dict]) -> None:
-    try:
-        with open(OUTPUT_FILE, "w", encoding="utf-8") as file:
-            json.dump(cars, file, ensure_ascii=False, indent=2)
-        logger.info("Обновлен файл %s (всего записей: %d)", OUTPUT_FILE, len(cars))
-    except OSError as exc:
-        logger.error("Не удалось сохранить данные в %s: %s", OUTPUT_FILE, exc)
 
 
 def scrape_trucks(logger: logging.Logger) -> None:
@@ -313,7 +271,9 @@ def scrape_trucks(logger: logging.Logger) -> None:
         return
 
     session = create_session_with_cookies(cookies, logger)
-    collected, seen_ids = load_existing_results(logger)
+    
+    # Множество ID для отслеживания дублей в текущем цикле парсинга
+    seen_ids_in_cycle: Set[str] = set()
 
     for year in range(START_YEAR, MIN_YEAR - 1, -1):
         year_range = build_year_range(year)
@@ -348,10 +308,9 @@ def scrape_trucks(logger: logging.Logger) -> None:
                 if not normalized:
                     continue
 
-                car_id_str, stored_value = normalized
-                if car_id_str not in seen_ids:
-                    seen_ids.add(car_id_str)
-                    collected.append({"id": stored_value})
+                car_id_str, _ = normalized
+                if car_id_str not in seen_ids_in_cycle:
+                    seen_ids_in_cycle.add(car_id_str)
                     new_count += 1
                 else:
                     repeat_count += 1
@@ -362,14 +321,11 @@ def scrape_trucks(logger: logging.Logger) -> None:
             # Сохраняем все автомобили со страницы в БД батчем
             if cars_to_save:
                 saved_count = save_cars_to_db_batch(logger, cars_to_save, collected_at)
-                logger.debug("Сохранено в БД: %d автомобилей", saved_count)
-            logger.info(
-                "Добавлено записей: %d, Дублей: %d  (всего %d)",
-                new_count, repeat_count,
-                len(collected),
-            )
-            if new_count > 0:
-                save_results(logger, collected)
+                logger.info(
+                    "Сохранено в БД: %d автомобилей (новых: %d, дублей: %d)",
+                    saved_count, new_count, repeat_count
+                )
+
             if new_count == 0:
                 all_repeat_count -= 1
 
@@ -385,7 +341,6 @@ def scrape_trucks(logger: logging.Logger) -> None:
             time.sleep(REQUEST_PAUSE_SECONDS)
         time.sleep(REQUEST_PAUSE_SECONDS)
 
-    save_results(logger, collected)
 
 
 def main() -> None:

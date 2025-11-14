@@ -16,12 +16,42 @@ logging.basicConfig(level=logging.INFO)
 COOKIES_FILE = "encar_cookies.json"
 
 
-def save_cookies(cookies):
+import json
+import logging
+import os
+import platform
+import time
+
+import requests
+
+# Запускаем виртуальный дисплей только при необходимости
+def start_virtual_display_if_needed():
+    system = platform.system().lower()
+
+    # Linux VPS (нет внешнего дисплея)
+    if system == "linux" and not os.environ.get("DISPLAY"):
+        try:
+            from pyvirtualdisplay import Display
+            display = Display(visible=False, size=(1920, 1080))
+            display.start()
+            logging.info("🟢 Virtual display started (Xvfb)")
+            return display
+        except Exception as e:
+            logging.error(f"❌ Failed to start virtual display: {e}")
+    else:
+        logging.info("ℹ️ Virtual display not needed on this OS")
+
+    return None
+
+
+def save_browser_data(cookies, headers):
     with open(COOKIES_FILE, "w") as f:
         json.dump({
             "saved_at": time.time(),
-            "cookies": cookies
+            "cookies": cookies,
+            "headers": headers,
         }, f)
+
 
 
 def load_cookies():
@@ -36,9 +66,7 @@ def load_cookies():
 
 
 def test():
-    # 🎥 Запускаем виртуальный дисплей FullHD
-    display = Display(visible=False, size=(1920, 1080))
-    display.start()
+    display = start_virtual_display_if_needed()
 
     options = Options()
 
@@ -55,11 +83,17 @@ def test():
     options.add_argument("--remote-debugging-port=9222")
     # options.add_argument("--headless")  # если на сервере без GUI
 
-    service = Service(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install())
 
+
+    if os.system == "linux" and not os.environ.get("DISPLAY"):
+        service = Service(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install())
+    else:
+        service = Service(ChromeDriverManager().install())
 
     driver = webdriver.Chrome(service=service, options=options)
-
+    # 🔹 Блокируем запросы к Google Ads
+    driver.execute_cdp_cmd("Network.setBlockedURLs", {"urls": ["*googleadservices.com*"]})
+    driver.execute_cdp_cmd("Network.enable", {})
     try:
 
         print("1. Opening Encar page...")
@@ -70,7 +104,6 @@ def test():
 
         cookies = driver.get_cookies()
         print(f"   Got {len(cookies)} cookies")
-        save_cookies(cookies)
 
         print("2. Making API request with browser...")
         session = requests.Session()
@@ -81,7 +114,7 @@ def test():
             'User-Agent': driver.execute_script("return navigator.userAgent"),
             'Referer': driver.current_url
         }
-        print(new_headers)
+
         session.headers.update(new_headers)
 
         api_url = "https://api.encar.com/search/car/list/premium"
@@ -90,13 +123,17 @@ def test():
         resp = session.get(api_url, params=params, timeout=10)
         print(f"   API status: {resp.status_code}")
         if resp.status_code == 200:
+            save_browser_data(cookies, new_headers)
             data = resp.json()
+            print(f"   API data: {data}")
             print(f"   Found {len(data.get('SearchResults', []))} cars")
         else:
             print(f"   Error: {resp.text[:200]}")
 
     finally:
         driver.quit()
+        if display:
+            display.stop()
 
 
 if __name__ == "__main__":

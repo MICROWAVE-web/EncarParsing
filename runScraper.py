@@ -1,8 +1,10 @@
 import json
 import logging
 import os
+import sqlite3
 import sys
 import time
+from datetime import datetime
 from typing import Dict, List, Optional, Set, Tuple
 
 import requests
@@ -10,15 +12,18 @@ import requests
 COOKIES_FILE = "encar_cookies.json"
 OUTPUT_FILE = "encar_truck_results.json"
 LOG_FILE = "encar_truck_scraper.log"
+DB_FILE = "encar_cars.db"
 
 BASE_API_URL = "https://api.encar.com/search/car/list/premium"
 START_YEAR = 2025
-MIN_YEAR = 1990
-PAGE_SIZE = 100
+MIN_YEAR = 2008
+PAGE_SIZE = 1000
 OFFSET_STEP = PAGE_SIZE
 INITIAL_OFFSET = 0
 REQUEST_TIMEOUT = 15
-REQUEST_PAUSE_SECONDS = 1.5
+REQUEST_PAUSE_SECONDS = 1
+DOUBLE_PAGES_TO_SKIP = 10
+CYCLE_PAUSE = 60  # Пауза между циклами парсинга в секундах
 
 
 def setup_logging() -> logging.Logger:
@@ -63,12 +68,32 @@ def load_cookies(logger: logging.Logger) -> Optional[List[Dict]]:
     logger.info("Используем сохраненные куки (%d шт.)", len(cookies))
     return cookies
 
+def load_headers(logger: logging.Logger):
+    if not os.path.exists(COOKIES_FILE):
+        logger.error("Файл с куками не найден: %s", COOKIES_FILE)
+        return None
 
-def create_session_with_cookies(cookies: List[Dict]) -> requests.Session:
+    try:
+        with open(COOKIES_FILE, "r", encoding="utf-8") as file:
+            data = json.load(file)
+    except (OSError, json.JSONDecodeError) as exc:
+        logger.error("Не удалось загрузить headers из %s: %s", COOKIES_FILE, exc)
+        return None
+
+    headers = data.get("headers")
+    if not headers:
+        logger.error("В файле %s отсутствуют куки", COOKIES_FILE)
+        return None
+
+    logger.info("Используем сохраненные headers (%d шт.)", len(headers))
+    return headers
+
+
+def create_session_with_cookies(cookies: List[Dict], logger: logging.Logger) -> requests.Session:
     session = requests.Session()
     session.trust_env = False
     session.proxies.clear()
-    session.headers.update({'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'Referer': 'https://www.encar.com/fc/fc_carsearchlist.do?carType=for#!%7B%22action%22%3A%22(And.Hidden.N._.CarType.N.)%22%2C%22toggle%22%3A%7B%7D%2C%22layer%22%3A%22%22%2C%22sort%22%3A%22ModifiedDate%22%2C%22page%22%3A1%2C%22limit%22%3A20%2C%22searchKey%22%3A%22%22%2C%22loginCheck%22%3Afalse%7D'})
+    session.headers.update(load_headers(logger))
 
     for cookie in cookies:
         name = cookie.get("name")
@@ -184,6 +209,95 @@ def load_existing_results(logger: logging.Logger) -> Tuple[List[Dict], Set[str]]
     return collected, seen_ids
 
 
+def init_database(logger: logging.Logger) -> None:
+    """Инициализирует базу данных SQLite с таблицей для автомобилей"""
+    try:
+        conn = sqlite3.connect(DB_FILE)
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS cars (
+                id TEXT PRIMARY KEY,
+                condition TEXT,
+                manufacturer TEXT,
+                model TEXT,
+                badge TEXT,
+                transmission TEXT,
+                fuel_type TEXT,
+                year REAL,
+                form_year TEXT,
+                mileage REAL,
+                price REAL,
+                sell_type TEXT,
+                modified_date TEXT,
+                collected_at TEXT,
+                UNIQUE(id)
+            )
+        """)
+        
+        conn.commit()
+        conn.close()
+        logger.info("База данных инициализирована: %s", DB_FILE)
+    except sqlite3.Error as exc:
+        logger.error("Ошибка при инициализации базы данных: %s", exc)
+
+
+def extract_car_data(car: Dict) -> Optional[Tuple]:
+    """Извлекает данные об автомобиле для сохранения в БД"""
+    car_id = str(car.get("Id", ""))
+    if not car_id:
+        return None
+    
+    condition = json.dumps(car.get("Condition", []), ensure_ascii=False) if car.get("Condition") else None
+    manufacturer = car.get("Manufacturer")
+    model = car.get("Model")
+    badge = car.get("Badge")
+    transmission = car.get("Transmission")
+    fuel_type = car.get("FuelType")
+    year = car.get("Year")
+    form_year = car.get("FormYear")
+    mileage = car.get("Mileage")
+    price = car.get("Price")
+    sell_type = car.get("SellType")
+    modified_date = car.get("ModifiedDate")
+    
+    return (
+        car_id, condition, manufacturer, model, badge, transmission, fuel_type,
+        year, form_year, mileage, price, sell_type, modified_date
+    )
+
+
+def save_cars_to_db_batch(logger: logging.Logger, cars: List[Dict], collected_at: str) -> int:
+    """Сохраняет список автомобилей в SQLite батчем"""
+    if not cars:
+        return 0
+    
+    try:
+        conn = sqlite3.connect(DB_FILE)
+        cursor = conn.cursor()
+        
+        saved_count = 0
+        for car in cars:
+            car_data = extract_car_data(car)
+            if not car_data:
+                continue
+            
+            cursor.execute("""
+                INSERT OR REPLACE INTO cars 
+                (id, condition, manufacturer, model, badge, transmission, fuel_type, 
+                 year, form_year, mileage, price, sell_type, modified_date, collected_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, car_data + (collected_at,))
+            saved_count += 1
+        
+        conn.commit()
+        conn.close()
+        return saved_count
+    except sqlite3.Error as exc:
+        logger.error("Ошибка при сохранении автомобилей в БД: %s", exc)
+        return 0
+
+
 def save_results(logger: logging.Logger, cars: List[Dict]) -> None:
     try:
         with open(OUTPUT_FILE, "w", encoding="utf-8") as file:
@@ -198,7 +312,7 @@ def scrape_trucks(logger: logging.Logger) -> None:
     if not cookies:
         return
 
-    session = create_session_with_cookies(cookies)
+    session = create_session_with_cookies(cookies, logger)
     collected, seen_ids = load_existing_results(logger)
 
     for year in range(START_YEAR, MIN_YEAR - 1, -1):
@@ -207,8 +321,8 @@ def scrape_trucks(logger: logging.Logger) -> None:
 
         offset = INITIAL_OFFSET
 
-        # Счетчик полностью паовторяющейся выборки
-        all_repeat_count = 5
+        # Счетчик полностью повторяющейся выборки
+        all_repeat_count = DOUBLE_PAGES_TO_SKIP
         while True:
 
             page_results = fetch_page(session, logger, year_range, offset)
@@ -226,6 +340,9 @@ def scrape_trucks(logger: logging.Logger) -> None:
 
             new_count = 0
             repeat_count = 0
+            collected_at = datetime.now().isoformat()
+            cars_to_save = []
+            
             for car in page_results:
                 normalized = normalize_car_id(car.get("Id"))
                 if not normalized:
@@ -238,6 +355,14 @@ def scrape_trucks(logger: logging.Logger) -> None:
                     new_count += 1
                 else:
                     repeat_count += 1
+                
+                # Добавляем в список для сохранения в БД (включая обновления)
+                cars_to_save.append(car)
+            
+            # Сохраняем все автомобили со страницы в БД батчем
+            if cars_to_save:
+                saved_count = save_cars_to_db_batch(logger, cars_to_save, collected_at)
+                logger.debug("Сохранено в БД: %d автомобилей", saved_count)
             logger.info(
                 "Добавлено записей: %d, Дублей: %d  (всего %d)",
                 new_count, repeat_count,
@@ -266,12 +391,28 @@ def scrape_trucks(logger: logging.Logger) -> None:
 def main() -> None:
     logger = setup_logging()
     logger.info("Старт парсинга авто Encar")
-    start_ts = time.time()
-    try:
-        scrape_trucks(logger)
-    finally:
-        duration = time.time() - start_ts
-        logger.info("Завершено за %.2f секунд", duration)
+    
+    # Инициализируем базу данных
+    init_database(logger)
+    
+    cycle_number = 0
+    while True:
+        cycle_number += 1
+        logger.info("=" * 60)
+        logger.info("Начало цикла парсинга #%d", cycle_number)
+        logger.info("=" * 60)
+        
+        start_ts = time.time()
+        try:
+            scrape_trucks(logger)
+        except Exception as exc:
+            logger.error("Ошибка в цикле парсинга: %s", exc, exc_info=True)
+        finally:
+            duration = time.time() - start_ts
+            logger.info("Цикл #%d завершен за %.2f секунд", cycle_number, duration)
+        
+        logger.info("Пауза %d секунд перед следующим циклом...", CYCLE_PAUSE)
+        time.sleep(CYCLE_PAUSE)
 
 
 if __name__ == "__main__":

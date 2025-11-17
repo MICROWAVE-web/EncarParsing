@@ -2,6 +2,7 @@ import json
 import logging
 import sqlite3
 import time
+import traceback
 from datetime import datetime
 from typing import Dict, List, Optional, Set, Tuple
 
@@ -117,8 +118,8 @@ def init_database(logger: logging.Logger) -> None:
             CREATE TABLE IF NOT EXISTS cars (
                 id TEXT PRIMARY KEY,
                 condition TEXT,
-                brand_fk.name TEXT,
-                model_fk.name TEXT,
+                brand_fk TEXT,
+                model_fk TEXT,
                 badgeDetailNm TEXT,
                 transmission TEXT,
                 fuelNm TEXT,
@@ -182,7 +183,7 @@ def save_cars_to_db_batch(cars: List[Dict], collected_at: str) -> int:
 
             cursor.execute("""
                 INSERT OR REPLACE INTO cars 
-                (id, condition, brand_fk.name, model_fk.name, badgeDetailNm, transmission, fuelNm, 
+                (id, condition, brand_fk, model_fk, badgeDetailNm, transmission, fuelNm, 
                  year, formYear, mileage, price, sell_type, mdfDt, collected_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, car_data + (collected_at,))
@@ -192,6 +193,7 @@ def save_cars_to_db_batch(cars: List[Dict], collected_at: str) -> int:
         conn.close()
         return saved_count
     except sqlite3.Error:
+        traceback.print_exc()
         return 0
 
 

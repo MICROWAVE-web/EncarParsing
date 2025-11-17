@@ -119,17 +119,17 @@ EncarParsing/
 |------|-----|----------|
 | id | TEXT | Уникальный ID автомобиля |
 | condition | TEXT | Состояние (JSON) |
-| manufacturer | TEXT | Производитель |
-| model | TEXT | Модель |
-| badge | TEXT | Модификация |
+| brand_fk | TEXT | Производитель |
+| model_fk | TEXT | Модель |
+| badgeDetailNm | TEXT | Модификация |
 | transmission | TEXT | Коробка передач |
-| fuel_type | TEXT | Тип топлива |
+| fuelNm | TEXT | Тип топлива |
 | year | REAL | Год выпуска |
-| form_year | TEXT | Формальный год |
+| formYear | TEXT | Формальный год |
 | mileage | REAL | Пробег |
 | price | REAL | Цена |
 | sell_type | TEXT | Тип продажи |
-| modified_date | TEXT | Дата изменения на сайте |
+| mdfDt | TEXT | Дата изменения на сайте |
 | collected_at | TEXT | Дата сбора данных |
 
 ## Особенности

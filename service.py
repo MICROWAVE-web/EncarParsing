@@ -9,11 +9,58 @@ from decouple import config
 
 COOKIES_FILE = config("COOKIES_FILE", default="encar_cookies.json")
 LOG_FILE = config("LOG_FILE", default="encar_cars_scraper.log")
+PROXY = config("PROXY", default=None)
 
 # Настройки микросервиса логирования
 NOTIFICATION_SERVICE_NAME = config("NOTIFICATION_SERVICE_NAME", default="EncarParsing")
 NOTIFICATION_API_BASE = config("NOTIFICATION_API_BASE")
 NOTIFICATION_TIMEOUT = config("NOTIFICATION_TIMEOUT", default=5, cast=int)
+
+
+def parse_proxy(proxy_string: Optional[str]) -> Optional[Dict[str, str]]:
+    """
+    Парсит прокси из формата user:password@ip:port
+    Возвращает словарь с прокси для requests или None
+    """
+    if not proxy_string:
+        return None
+    
+    try:
+        # Проверяем, есть ли аутентификация
+        if '@' in proxy_string:
+            # Формат: user:password@ip:port
+            auth_part, server_part = proxy_string.rsplit('@', 1)
+            if ':' in auth_part:
+                username, password = auth_part.split(':', 1)
+            else:
+                username, password = auth_part, ''
+            
+            if ':' in server_part:
+                host, port = server_part.split(':', 1)
+            else:
+                host, port = server_part, '8080'
+            
+            proxy_url = f"http://{username}:{password}@{host}:{port}"
+        else:
+            # Формат: ip:port (без аутентификации)
+            if ':' in proxy_string:
+                host, port = proxy_string.split(':', 1)
+            else:
+                host, port = proxy_string, '8080'
+            proxy_url = f"http://{host}:{port}"
+        
+        return {
+            'http': proxy_url,
+            'https': proxy_url
+        }
+    except Exception as e:
+        logging.warning(f"Ошибка при парсинге прокси '{proxy_string}': {e}")
+        return None
+
+
+def get_proxy_config() -> Optional[Dict[str, str]]:
+    """Возвращает конфигурацию прокси из переменной окружения"""
+    return parse_proxy(PROXY)
 
 
 def setup_logging() -> logging.Logger:
@@ -76,6 +123,13 @@ def create_session_with_cookies(cookies: List[Dict], headers: Dict) -> requests.
     session.trust_env = False
     session.proxies.clear()
     session.headers.update(headers)
+
+    # Настраиваем прокси, если указан
+    proxy_config = get_proxy_config()
+    if proxy_config and PROXY:
+        session.proxies.update(proxy_config)
+        proxy_display = PROXY.split('@')[-1] if '@' in PROXY else PROXY
+        logging.getLogger("encar_cars_scraper").info(f"Используется прокси: {proxy_display}")
 
     for cookie in cookies:
         name = cookie.get("name")

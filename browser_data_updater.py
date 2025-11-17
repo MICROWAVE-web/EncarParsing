@@ -2,21 +2,59 @@ import json
 import logging
 import os
 import platform
+import shutil
+import tempfile
 import time
 
 import requests
 from decouple import config
-from selenium import webdriver
+from seleniumwire import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.core.os_manager import ChromeType
 
-from service import load_browser_data, setup_logging, create_session_with_cookies
+from service import load_browser_data, setup_logging, create_session_with_cookies, get_proxy_config, PROXY
 
 logging.basicConfig(level=logging.INFO)
 
 COOKIES_FILE = config("COOKIES_FILE", default="encar_cookies.json")
+
+
+
+def get_proxy_for_selenium() -> tuple:
+    """
+    Парсит прокси из переменной окружения и возвращает компоненты для Selenium
+    Возвращает (host, port, username, password) или (None, None, None, None)
+    """
+    if not PROXY:
+        return None, None, None, None
+
+    try:
+        if '@' in PROXY:
+            # Формат: user:password@ip:port
+            auth_part, server_part = PROXY.rsplit('@', 1)
+            if ':' in auth_part:
+                username, password = auth_part.split(':', 1)
+            else:
+                username, password = auth_part, ''
+
+            if ':' in server_part:
+                host, port = server_part.split(':', 1)
+            else:
+                host, port = server_part, '8080'
+        else:
+            # Формат: ip:port (без аутентификации)
+            if ':' in PROXY:
+                host, port = PROXY.split(':', 1)
+            else:
+                host, port = PROXY, '8080'
+            username, password = None, None
+
+        return host, port, username, password
+    except Exception as e:
+        logging.warning(f"Ошибка при парсинге прокси для Selenium '{PROXY}': {e}")
+        return None, None, None, None
 
 
 # Запускаем виртуальный дисплей только при необходимости
@@ -84,12 +122,36 @@ def refresh_cookies(logger):
     options.add_argument("--remote-debugging-port=9222")
     # options.add_argument("--headless")  # если на сервере без GUI
 
+    # Настраиваем прокси для Selenium
+    proxy_host, proxy_port, proxy_user, proxy_pass = get_proxy_for_selenium()
+
+    seleniumwire_options = {}
+
+    if proxy_host and proxy_port:
+        if proxy_user and proxy_pass:
+            # Прокси с аутентификацией - используем расширение Chrome
+            logger.info(f"Настройка прокси с аутентификацией: {proxy_host}:{proxy_port}")
+
+            proxy_url = f"http://{proxy_user}:{proxy_pass}@{proxy_host}:{proxy_port}"
+
+            # set selenium-wire options to use the proxy
+            seleniumwire_options = {
+                "proxy": {
+                    "http": proxy_url,
+                    "https": proxy_url,
+                    "no_proxy": "localhost,127.0.0.1"
+                },
+            }
+        else:
+            # Прокси без аутентификации - используем аргумент командной строки
+            logger.info(f"Настройка прокси без аутентификации: {proxy_host}:{proxy_port}")
+            options.add_argument(f"--proxy-server={proxy_host}:{proxy_port}")
+
     if platform.system().lower() == "linux":
         service = Service(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install())
     else:
         service = Service(ChromeDriverManager().install())
-
-    driver = webdriver.Chrome(service=service, options=options)
+    driver = webdriver.Chrome(service=service, options=options, seleniumwire_options=seleniumwire_options)
     # 🔹 Блокируем запросы к Google Ads
     driver.execute_cdp_cmd("Network.setBlockedURLs", {"urls": ["*googleadservices.com*"]})
     driver.execute_cdp_cmd("Network.enable", {})
@@ -105,6 +167,16 @@ def refresh_cookies(logger):
 
         logger.info("2. Making API request with browser...")
         session = requests.Session()
+        session.trust_env = False
+        session.proxies.clear()
+
+        # Настраиваем прокси, если указан
+        proxy_config = get_proxy_config()
+        if proxy_config and PROXY:
+            session.proxies.update(proxy_config)
+            proxy_display = PROXY.split('@')[-1] if '@' in PROXY else PROXY
+            logger.info(f"Используется прокси для requests: {proxy_display}")
+
         for cookie in cookies:
             session.cookies.set(cookie['name'], cookie['value'])
 
@@ -123,18 +195,22 @@ def refresh_cookies(logger):
         if display:
             display.stop()
 
-
 # Тестовая функция для проверки функционала
 def check_and_update_browser_data():
     logger = setup_logging()
-    cookies, headers = load_browser_data(logger)
-    session = create_session_with_cookies(cookies, headers)
-    check_result = check_browser_data(session, logger)
-    if check_result:
-        logger.info("Данные для парсинга (Куки, Хедеры) актуальны.")
-    else:
-        logger.info("Данные для парсинга (Куки, Хедеры) устарели, обновляю...")
+    browser_data = load_browser_data(logger)
+    if not browser_data:
+        logger.info("Данные для парсинга (Куки, Хедеры) отсутствуют. Получаю...")
         refresh_cookies(logger)
+    else:
+        cookies, headers = browser_data
+        session = create_session_with_cookies(cookies, headers)
+        check_result = check_browser_data(session, logger)
+        if check_result:
+            logger.info("Данные для парсинга (Куки, Хедеры) актуальны.")
+        else:
+            logger.info("Данные для парсинга (Куки, Хедеры) устарели, обновляю...")
+            refresh_cookies(logger)
 
 
 if __name__ == "__main__":

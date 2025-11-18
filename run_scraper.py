@@ -31,7 +31,7 @@ CYCLE_PAUSE = config("CYCLE_PAUSE", default=60, cast=int)  # Пауза межд
 NOTIFICATION_SERVICE_NAME = config("NOTIFICATION_SERVICE_NAME", default="EncarParsing")
 NOTIFICATION_API_BASE = config("NOTIFICATION_API_BASE", default="http://188.225.73.94/api/notifications")
 NOTIFICATION_TIMEOUT = config("NOTIFICATION_TIMEOUT", default=5, cast=int)
-
+INFINITY = config("INFINITY", cast=bool, default=False)
 
 def check_browser_data_validity(logger: logging.Logger) -> bool:
     """Проверяет пригодность cookies и headers, делая тестовый запрос к API"""
@@ -166,20 +166,29 @@ def extract_car_data(car: Dict) -> Optional[Tuple]:
     )
 
 
-def save_cars_to_db_batch(cars: List[Dict], collected_at: str) -> int:
-    """Сохраняет список автомобилей в SQLite батчем"""
+def save_cars_to_db_batch(cars: List[Dict], collected_at: str) -> Tuple[int, int]:
+    """Сохраняет список автомобилей в SQLite батчем
+    Возвращает кортеж (количество новых, количество обновленных)"""
     if not cars:
-        return 0
+        return 0, 0
 
     try:
         conn = sqlite3.connect(DB_FILE)
         cursor = conn.cursor()
 
-        saved_count = 0
+        new_count = 0
+        updated_count = 0
+        
         for car in cars:
             car_data = extract_car_data(car)
             if not car_data:
                 continue
+
+            car_id = car_data[0]
+            
+            # Проверяем, существует ли запись с таким ID
+            cursor.execute("SELECT id FROM cars WHERE id = ?", (car_id,))
+            exists = cursor.fetchone() is not None
 
             cursor.execute("""
                 INSERT OR REPLACE INTO cars 
@@ -187,14 +196,18 @@ def save_cars_to_db_batch(cars: List[Dict], collected_at: str) -> int:
                  year, formYear, mileage, price, sell_type, mdfDt, collected_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, car_data + (collected_at,))
-            saved_count += 1
+            
+            if exists:
+                updated_count += 1
+            else:
+                new_count += 1
 
         conn.commit()
         conn.close()
-        return saved_count
+        return new_count, updated_count
     except sqlite3.Error:
         traceback.print_exc()
-        return 0
+        return 0, 0
 
 
 def scrape_cars(logger: logging.Logger) -> None:
@@ -217,11 +230,15 @@ def scrape_cars(logger: logging.Logger) -> None:
     seen_ids_in_cycle: Set[str] = set()
     cycle_start_time = time.time()
     total_processed = 0
+    total_new = 0
+    total_updated = 0
 
     for year in range(START_YEAR, MIN_YEAR - 1, -1):
         year_start_time = time.time()
         year_range = build_year_range(year)
         year_processed_count = 0
+        year_new = 0
+        year_updated = 0
 
         offset = INITIAL_OFFSET
         all_repeat_count = DOUBLE_PAGES_TO_SKIP
@@ -250,7 +267,7 @@ def scrape_cars(logger: logging.Logger) -> None:
 
             collected_at = datetime.now().isoformat()
             cars_to_save = []
-            new_count = 0
+            new_ids_in_page = 0
 
             for car in page_results:
                 car_id_str = normalize_car_id(car.get("Id"))
@@ -259,16 +276,20 @@ def scrape_cars(logger: logging.Logger) -> None:
 
                 if car_id_str not in seen_ids_in_cycle:
                     seen_ids_in_cycle.add(car_id_str)
-                    new_count += 1
+                    new_ids_in_page += 1
 
                 cars_to_save.append(car)
 
             if cars_to_save:
-                saved_count = save_cars_to_db_batch(cars_to_save, collected_at)
-                year_processed_count += saved_count
-                logger.info("Год %s, offset %d: обработано %d авто", year_range, offset, saved_count)
+                new_count, updated_count = save_cars_to_db_batch(cars_to_save, collected_at)
+                total_count = new_count + updated_count
+                year_processed_count += total_count
+                year_new += new_count
+                year_updated += updated_count
+                logger.info("Год %s, offset %d: обработано %d авто (Новых: %d, Обновлено: %d)", 
+                           year_range, offset, total_count, new_count, updated_count)
 
-            if new_count == 0:
+            if new_ids_in_page == 0:
                 all_repeat_count -= 1
 
             if all_repeat_count < 0:
@@ -279,12 +300,16 @@ def scrape_cars(logger: logging.Logger) -> None:
 
         year_duration = time.time() - year_start_time
         total_processed += year_processed_count
-        logger.info("Год %s: обработано %d авто за %.2f сек", year_range, year_processed_count, year_duration)
+        total_new += year_new
+        total_updated += year_updated
+        logger.info("Год %s: обработано %d авто (Новых: %d, Обновлено: %d) за %.2f сек", 
+                   year_range, year_processed_count, year_new, year_updated, year_duration)
         time.sleep(REQUEST_PAUSE_SECONDS)
 
     cycle_duration = time.time() - cycle_start_time
-    logger.info("=== Итоги цикла: обработано %d авто за %.2f сек (%.2f сек/год) ===",
-                total_processed, cycle_duration, cycle_duration / (START_YEAR - MIN_YEAR + 1))
+    logger.info("=== Итоги цикла: обработано %d авто (Новых: %d, Обновлено: %d) за %.2f сек (%.2f сек/год) ===",
+                total_processed, total_new, total_updated, cycle_duration, 
+                cycle_duration / (START_YEAR - MIN_YEAR + 1))
 
 
 def main() -> None:
@@ -319,6 +344,9 @@ def main() -> None:
         finally:
             duration = time.time() - start_ts
             logger.info("Цикл #%d завершен за %.2f секунд", cycle_number, duration)
+
+        if not INFINITY:
+            break
 
         logger.info("Пауза %d секунд перед следующим циклом...", CYCLE_PAUSE)
         time.sleep(CYCLE_PAUSE)

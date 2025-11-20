@@ -18,9 +18,11 @@ DB_FILE = config("DB_FILE", default="encar_cars.db")
 
 BASE_API_URL = config("BASE_API_URL", default="https://api.encar.com/search/car/list/premium")
 READSIDE_API_URL = config("READSIDE_API_URL", default="https://api.encar.com/v1/readside/vehicles")
+LEGACY_API_URL = config("LEGACY_API_URL", default="https://api.encar.com/legacy/usedcar/sale/car")
 START_YEAR = config("START_YEAR", default=2025, cast=int)
 MIN_YEAR = config("MIN_YEAR", default=2008, cast=int)
 READSIDE_BATCH_SIZE = 20  # Лимит ID в одном запросе к readside API
+LEGACY_BATCH_SIZE = 150  # Лимит ID в одном запросе к legacy API
 PAGE_SIZE = config("PAGE_SIZE", default=1000, cast=int)
 OFFSET_STEP = config("OFFSET_STEP", default=1000, cast=int)
 INITIAL_OFFSET = config("INITIAL_OFFSET", default=0, cast=int)
@@ -151,6 +153,7 @@ def init_database(logger: logging.Logger) -> None:
                 vin TEXT,
                 advertisement_status TEXT,
                 finish REAL,
+                options TEXT,
                 collected_at TEXT,
                 UNIQUE(vehicleId)
             )
@@ -189,11 +192,11 @@ def extract_car_data(car: Dict) -> Optional[Tuple]:
     )
 
 
-def save_cars_to_db_batch(cars: List[Dict], collected_at: str) -> Tuple[int, int]:
+def save_cars_to_db_batch(cars: List[Dict], collected_at: str) -> Tuple[int, int, List[str]]:
     """Сохраняет список автомобилей в SQLite батчем
-    Возвращает кортеж (количество новых, количество обновленных)"""
+    Возвращает кортеж (количество новых, количество обновленных, список новых ID)"""
     if not cars:
-        return 0, 0
+        return 0, 0, []
 
     try:
         conn = sqlite3.connect(DB_FILE)
@@ -201,6 +204,7 @@ def save_cars_to_db_batch(cars: List[Dict], collected_at: str) -> Tuple[int, int
 
         new_count = 0
         updated_count = 0
+        new_ids = []
         
         for car in cars:
             car_data = extract_car_data(car)
@@ -224,17 +228,19 @@ def save_cars_to_db_batch(cars: List[Dict], collected_at: str) -> Tuple[int, int
                 updated_count += 1
             else:
                 new_count += 1
+                new_ids.append(car_id)
 
         conn.commit()
         conn.close()
-        return new_count, updated_count
+        return new_count, updated_count, new_ids
     except sqlite3.Error:
         traceback.print_exc()
-        return 0, 0
+        return 0, 0, []
 
 
-def scrape_cars(logger: logging.Logger) -> None:
-    """Основная функция парсинга автомобилей"""
+def scrape_cars(logger: logging.Logger) -> List[str]:
+    """Основная функция парсинга автомобилей
+    Возвращает список ID новых автомобилей"""
     browser_data = load_browser_data(logger)
     if not browser_data:
         logger.warning("Попытка обновить cookies и headers...")
@@ -242,10 +248,10 @@ def scrape_cars(logger: logging.Logger) -> None:
             browser_data = load_browser_data(logger)
             if not browser_data:
                 logger.error("Не удалось загрузить данные после обновления")
-                return
+                return []
         else:
             logger.error("Не удалось обновить cookies и headers")
-            return
+            return []
 
     cookies, headers = browser_data
     session = create_session_with_cookies(cookies, headers)
@@ -255,6 +261,7 @@ def scrape_cars(logger: logging.Logger) -> None:
     total_processed = 0
     total_new = 0
     total_updated = 0
+    all_new_ids = []
 
     for year in range(START_YEAR, MIN_YEAR - 1, -1):
         year_start_time = time.time()
@@ -304,7 +311,8 @@ def scrape_cars(logger: logging.Logger) -> None:
                 cars_to_save.append(car)
 
             if cars_to_save:
-                new_count, updated_count = save_cars_to_db_batch(cars_to_save, collected_at)
+                new_count, updated_count, new_ids = save_cars_to_db_batch(cars_to_save, collected_at)
+                all_new_ids.extend(new_ids)
                 total_count = new_count + updated_count
                 year_processed_count += total_count
                 year_new += new_count
@@ -333,6 +341,9 @@ def scrape_cars(logger: logging.Logger) -> None:
     logger.info("=== Итоги цикла: обработано %d авто (Новых: %d, Обновлено: %d) за %.2f сек (%.2f сек/год) ===",
                 total_processed, total_new, total_updated, cycle_duration, 
                 cycle_duration / (START_YEAR - MIN_YEAR + 1))
+    
+    logger.info("Всего новых автомобилей для обработки деталей: %d", len(all_new_ids))
+    return all_new_ids
 
 
 def get_all_car_ids(logger: logging.Logger) -> List[str]:
@@ -348,6 +359,48 @@ def get_all_car_ids(logger: logging.Logger) -> List[str]:
     except sqlite3.Error as exc:
         logger.error("Ошибка при получении ID из таблицы cars: %s", exc)
         return []
+
+
+def fetch_cars_sale_status(
+    session: requests.Session,
+    car_ids: List[str],
+    logger: logging.Logger
+) -> Optional[Dict[str, str]]:
+    """Получает статус продажи автомобилей через legacy API
+    Возвращает словарь {car_id: sale_status} только для тех ID, для которых получен ответ"""
+    if not car_ids:
+        return None
+    
+    # Формируем строку с ID через запятую
+    ids_string = ",".join(car_ids)
+    
+    params = {
+        "carIds": ids_string,
+        "include": "SPEC,ADVERTISEMENT,CATEGORY,OPTIONS"
+    }
+    
+    try:
+        response = session.get(LEGACY_API_URL, params=params, timeout=REQUEST_TIMEOUT)
+        if response.status_code != 200:
+            if response.status_code in (401, 403, 407):
+                logger.warning("Получен статус %d при запросе статуса продажи, возможно cookies устарели", response.status_code)
+            else:
+                logger.warning("Получен статус %d при запросе статуса продажи", response.status_code)
+            return None
+        payload = response.json()
+        if isinstance(payload, list):
+            # Создаем словарь {car_id: sale_status}
+            result = {}
+            for item in payload:
+                car_id = str(item.get("carId", ""))
+                sale_status = item.get("saleStatus", "")
+                if car_id:
+                    result[car_id] = sale_status
+            return result
+        return {}
+    except (requests.RequestException, json.JSONDecodeError) as exc:
+        logger.error("Ошибка при запросе статуса продажи: %s", exc)
+        return None
 
 
 def fetch_cars_details(
@@ -384,10 +437,102 @@ def fetch_cars_details(
         return None
 
 
-def process_cars_details(logger: logging.Logger) -> None:
+def process_car_detail_full(
+    car_detail: Dict,
+    cursor: sqlite3.Cursor,
+    logger: logging.Logger,
+    STATUSES_TO_DELETE: Set[str]
+) -> Tuple[int, int]:
+    """Обрабатывает полную детальную информацию об автомобиле
+    Возвращает (deleted_count, saved_count)"""
+    vehicle_id = str(car_detail.get("vehicleId", ""))
+    if not vehicle_id:
+        return 0, 0
+    
+    advertisement = car_detail.get("advertisement", {})
+    status = advertisement.get("status", "")
+    category = car_detail.get("category", {})
+    manufacturer_english_name = category.get("manufacturerEnglishName", "")
+
+    # Проверяем статус - если в списке для удаления, удаляем из cars
+    if status in STATUSES_TO_DELETE:
+        try:
+            cursor.execute("DELETE FROM cars WHERE id = ?", (vehicle_id,))
+            logger.debug("Удален автомобиль %s со статусом %s", vehicle_id, status)
+            return 1, 0
+        except sqlite3.Error as exc:
+            logger.error("Ошибка при удалении автомобиля %s: %s", vehicle_id, exc)
+            return 0, 0
+
+    # Проверяем бренд - если содержит "other", удаляем из cars
+    if manufacturer_english_name and "other" in manufacturer_english_name.lower():
+        try:
+            cursor.execute("DELETE FROM cars WHERE id = ?", (vehicle_id,))
+            logger.debug("Удален автомобиль %s с брендом 'other'", vehicle_id)
+            return 1, 0
+        except sqlite3.Error as exc:
+            logger.error("Ошибка при удалении автомобиля %s: %s", vehicle_id, exc)
+            return 0, 0
+
+    # Сохраняем в cars_details
+    spec = car_detail.get("spec", {})
+    options_data = car_detail.get("options", {})
+
+    year_month = category.get("yearMonth")
+    displacement = spec.get("displacement")
+    model_group_english_name = category.get("modelGroupEnglishName")
+    grade_english_name = category.get("gradeEnglishName")
+    grade_detail_english_name = category.get("gradeDetailEnglishName")
+    color_name = spec.get("colorName")
+    seat_count = spec.get("seatCount")
+    vehicle_no = car_detail.get("vehicleNo")
+    vin = car_detail.get("vin")
+
+    # Получаем цену из advertisement и умножаем на 10000
+    price_in_currency = advertisement.get("priceInCurrency") or advertisement.get("price")
+    finish = None
+    if price_in_currency is not None:
+        try:
+            finish = float(price_in_currency) * 10000
+        except (ValueError, TypeError):
+            finish = None
+
+    # Сохраняем options как JSON строку
+    options_json = None
+    if options_data:
+        try:
+            options_json = json.dumps(options_data, ensure_ascii=False)
+        except (TypeError, ValueError) as exc:
+            logger.warning("Ошибка при сериализации options для автомобиля %s: %s", vehicle_id, exc)
+            options_json = None
+
+    collected_at = datetime.now().isoformat()
+
+    try:
+        cursor.execute("""
+                            INSERT OR REPLACE INTO cars_details 
+                            (vehicleId, yearMonth, displacement, manufacturerEnglishName,
+                             modelGroupEnglishName, gradeEnglishName, gradeDetailEnglishName,
+                             colorName, seatCount, vehicleNo, vin, 
+                             advertisement_status, finish, options, collected_at)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        """, (
+            vehicle_id, year_month, displacement,
+            manufacturer_english_name, model_group_english_name,
+            grade_english_name, grade_detail_english_name,
+            color_name, seat_count, vehicle_no, vin,
+            status, finish, options_json, collected_at
+        ))
+        return 0, 1
+    except sqlite3.Error as exc:
+        logger.error("Ошибка при сохранении детальной информации для автомобиля %s: %s", vehicle_id, exc)
+        return 0, 0
+
+
+def process_cars_details(new_car_ids: List[str], logger: logging.Logger) -> None:
     """Обрабатывает детальную информацию об автомобилях:
-    - Получает все ID из таблицы cars
-    - Запрашивает детальную информацию через readside API
+    - Для новых автомобилей: полная обработка через readside API
+    - Для существующих: сначала legacy API для статуса, потом readside для тех, что не получили ответ
     - Удаляет авто со статусами BOOKED, DELETE, LEASE_SALE, SOLD, WAIT из cars
     - Удаляет авто с брендом "other" из cars
     - Сохраняет остальные в cars_details
@@ -403,6 +548,13 @@ def process_cars_details(logger: logging.Logger) -> None:
     if not all_ids:
         logger.info("Нет автомобилей для обработки")
         return
+    
+    # Разделяем на новые и существующие
+    new_ids_set = set(new_car_ids)
+    existing_ids = [car_id for car_id in all_ids if car_id not in new_ids_set]
+    
+    logger.info("Новых автомобилей для полной обработки: %d", len(new_car_ids))
+    logger.info("Существующих автомобилей для проверки статуса: %d", len(existing_ids))
     
     # Получаем cookies и headers для запросов
     browser_data = load_browser_data(logger)
@@ -420,123 +572,135 @@ def process_cars_details(logger: logging.Logger) -> None:
     cookies, headers = browser_data
     session = create_session_with_cookies(cookies, headers)
     
-    # Разбиваем на батчи по 20 ID
     total_processed = 0
     total_deleted = 0
     total_saved = 0
-
-    for i in range(0, len(all_ids), READSIDE_BATCH_SIZE):
-        batch_ids = all_ids[i:i + READSIDE_BATCH_SIZE]
-        logger.info("Обработка батча %d-%d из %d", i + 1, min(i + len(batch_ids), len(all_ids)), len(all_ids))
-        
-        # Запрашиваем детальную информацию
-        details_data = fetch_cars_details(session, batch_ids, logger)
-        if details_data is None:
-
-            # Пробуем обновить cookies и повторить
-            if refresh_cookies(logger):
-                browser_data = load_browser_data(logger)
-                if browser_data:
-                    cookies, headers = browser_data
-                    session = create_session_with_cookies(cookies, headers)
-                    details_data = fetch_cars_details(session, batch_ids, logger)
-                    if details_data is None:
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+    
+    # Обработка новых автомобилей через readside (полная обработка)
+    if new_car_ids:
+        logger.info("=== Обработка новых автомобилей через readside API ===")
+        for i in range(0, len(new_car_ids), READSIDE_BATCH_SIZE):
+            batch_ids = new_car_ids[i:i + READSIDE_BATCH_SIZE]
+            logger.info("Обработка батча новых авто %d-%d из %d", i + 1, min(i + len(batch_ids), len(new_car_ids)), len(new_car_ids))
+            
+            details_data = fetch_cars_details(session, batch_ids, logger)
+            if details_data is None:
+                # Пробуем обновить cookies и повторить
+                if refresh_cookies(logger):
+                    browser_data = load_browser_data(logger)
+                    if browser_data:
+                        cookies, headers = browser_data
+                        session = create_session_with_cookies(cookies, headers)
+                        details_data = fetch_cars_details(session, batch_ids, logger)
+                        if details_data is None:
+                            continue
+                    else:
                         continue
                 else:
                     continue
-            else:
-                continue
-
-        
-        # Обрабатываем каждый автомобиль
-        conn = sqlite3.connect(DB_FILE)
-        cursor = conn.cursor()
-        
-        for car_detail in details_data:
-            vehicle_id = str(car_detail.get("vehicleId", ""))
-            if not vehicle_id:
-                continue
             
-            advertisement = car_detail.get("advertisement", {})
-            status = advertisement.get("status", "")
-            category = car_detail.get("category", {})
-            manufacturer_english_name = category.get("manufacturerEnglishName", "")
-
-            # Проверяем статус - если в списке для удаления, удаляем из cars
-            if status in STATUSES_TO_DELETE:
-                try:
-                    cursor.execute("DELETE FROM cars WHERE id = ?", (vehicle_id,))
-                    total_deleted += 1
-                    logger.debug("Удален автомобиль %s со статусом %s", vehicle_id, status)
-                except sqlite3.Error as exc:
-                    logger.error("Ошибка при удалении автомобиля %s: %s", vehicle_id, exc)
+            for car_detail in details_data:
+                deleted, saved = process_car_detail_full(car_detail, cursor, logger, STATUSES_TO_DELETE)
+                total_deleted += deleted
+                total_saved += saved
                 total_processed += 1
-                continue
-
-            # Проверяем бренд - если содержит "other", удаляем из cars
-            if manufacturer_english_name and "other" in manufacturer_english_name.lower():
-                try:
-                    cursor.execute("DELETE FROM cars WHERE id = ?", (vehicle_id,))
-                    total_deleted += 1
-                    logger.debug("Удален автомобиль %s с брендом 'other'", vehicle_id)
-                except sqlite3.Error as exc:
-                    logger.error("Ошибка при удалении автомобиля %s: %s", vehicle_id, exc)
-                total_processed += 1
-                continue
-
-            # Сохраняем в cars_details
-            spec = car_detail.get("spec", {})
-
-            year_month = category.get("yearMonth")
-            displacement = spec.get("displacement")
-            model_group_english_name = category.get("modelGroupEnglishName")
-            grade_english_name = category.get("gradeEnglishName")
-            grade_detail_english_name = category.get("gradeDetailEnglishName")
-            color_name = spec.get("colorName")
-            seat_count = spec.get("seatCount")
-            vehicle_no = car_detail.get("vehicleNo")
-            vin = car_detail.get("vin")
-
-            # Получаем цену из advertisement и умножаем на 10000
-            price_in_currency = advertisement.get("price")
-            finish = None
-            if price_in_currency is not None:
-                try:
-                    finish = float(price_in_currency) * 10000
-                except (ValueError, TypeError):
-                    finish = None
-
-            collected_at = datetime.now().isoformat()
-
-            try:
-                cursor.execute("""
-                                    INSERT OR REPLACE INTO cars_details 
-                                    (vehicleId, yearMonth, displacement, manufacturerEnglishName,
-                                     modelGroupEnglishName, gradeEnglishName, gradeDetailEnglishName,
-                                     colorName, seatCount, vehicleNo, vin, 
-                                     advertisement_status, finish, collected_at)
-                                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                                """, (
-                    vehicle_id, year_month, displacement,
-                    manufacturer_english_name, model_group_english_name,
-                    grade_english_name, grade_detail_english_name,
-                    color_name, seat_count, vehicle_no, vin,
-                    status, finish, collected_at
-                ))
-                total_saved += 1
-            except sqlite3.Error as exc:
-                logger.error("Ошибка при сохранении детальной информации для автомобиля %s: %s", vehicle_id, exc)
             
-            total_processed += 1
+            conn.commit()
+            time.sleep(REQUEST_PAUSE_SECONDS)
+    
+    # Обработка существующих автомобилей: сначала legacy API, потом readside для тех, что не получили ответ
+    if existing_ids:
+        logger.info("=== Обработка существующих автомобилей ===")
+        # Сначала проверяем через legacy API
+        ids_without_status = set(existing_ids)
         
-        conn.commit()
-        conn.close()
+        for i in range(0, len(existing_ids), LEGACY_BATCH_SIZE):
+            batch_ids = existing_ids[i:i + LEGACY_BATCH_SIZE]
+            logger.info("Проверка статуса через legacy API: батч %d-%d из %d", 
+                       i + 1, min(i + len(batch_ids), len(existing_ids)), len(existing_ids))
+            
+            sale_statuses = fetch_cars_sale_status(session, batch_ids, logger)
+            if sale_statuses is None:
+                # Пробуем обновить cookies и повторить
+                if refresh_cookies(logger):
+                    browser_data = load_browser_data(logger)
+                    if browser_data:
+                        cookies, headers = browser_data
+                        session = create_session_with_cookies(cookies, headers)
+                        sale_statuses = fetch_cars_sale_status(session, batch_ids, logger)
+                        if sale_statuses is None:
+                            continue
+                    else:
+                        continue
+                else:
+                    continue
+            
+            # Обновляем статус для тех, для которых получили ответ
+            for car_id, sale_status in sale_statuses.items():
+                if car_id in ids_without_status:
+                    ids_without_status.remove(car_id)
+                    try:
+                        # Проверяем, нужно ли удалять автомобиль по статусу
+                        if sale_status in STATUSES_TO_DELETE:
+                            cursor.execute("DELETE FROM cars WHERE id = ?", (car_id,))
+                            cursor.execute("DELETE FROM cars_details WHERE vehicleId = ?", (car_id,))
+                            total_deleted += 1
+                            logger.debug("Удален существующий автомобиль %s со статусом %s", car_id, sale_status)
+                        else:
+                            # Обновляем только статус в cars_details
+                            cursor.execute("""
+                                UPDATE cars_details 
+                                SET advertisement_status = ?, collected_at = ?
+                                WHERE vehicleId = ?
+                            """, (sale_status, datetime.now().isoformat(), car_id))
+                        total_processed += 1
+                    except sqlite3.Error as exc:
+                        logger.error("Ошибка при обновлении статуса для автомобиля %s: %s", car_id, exc)
+            
+            conn.commit()
+            time.sleep(REQUEST_PAUSE_SECONDS)
         
-        # Пауза между запросами
-        time.sleep(REQUEST_PAUSE_SECONDS)
+        # Для тех, что не получили ответ через legacy API, обращаемся к readside
+        ids_to_check_readside = list(ids_without_status)
+        if ids_to_check_readside:
+            logger.info("Проверка через readside API для %d автомобилей, не получивших ответ через legacy", len(ids_to_check_readside))
+            
+            for i in range(0, len(ids_to_check_readside), READSIDE_BATCH_SIZE):
+                batch_ids = ids_to_check_readside[i:i + READSIDE_BATCH_SIZE]
+                logger.info("Обработка через readside: батч %d-%d из %d", 
+                           i + 1, min(i + len(batch_ids), len(ids_to_check_readside)), len(ids_to_check_readside))
+                
+                details_data = fetch_cars_details(session, batch_ids, logger)
+                if details_data is None:
+                    # Пробуем обновить cookies и повторить
+                    if refresh_cookies(logger):
+                        browser_data = load_browser_data(logger)
+                        if browser_data:
+                            cookies, headers = browser_data
+                            session = create_session_with_cookies(cookies, headers)
+                            details_data = fetch_cars_details(session, batch_ids, logger)
+                            if details_data is None:
+                                continue
+                        else:
+                            continue
+                    else:
+                        continue
+                
+                for car_detail in details_data:
+                    deleted, saved = process_car_detail_full(car_detail, cursor, logger, STATUSES_TO_DELETE)
+                    total_deleted += deleted
+                    total_saved += saved
+                    total_processed += 1
+                
+                conn.commit()
+                time.sleep(REQUEST_PAUSE_SECONDS)
+    
+    conn.close()
     
     duration = time.time() - start_time
-    logger.info("=== Итоги обработки детальной информации: обработано %d авто, удалено: %d, сохранено в cars_details: %d за %.2f сек ===",
+    logger.info("=== Итоги обработки детальной информации: обработано %d авто, удалено: %d, сохранено/обновлено в cars_details: %d за %.2f сек ===",
                 total_processed, total_deleted, total_saved, duration)
 
 
@@ -545,8 +709,8 @@ def main() -> None:
     logger.info("Старт парсинга авто Encar")
     # Инициализируем базу данных
     init_database(logger)
-    process_cars_details(logger)
-    exit()
+    #process_cars_details(logger)
+    #exit()
     # Проверяем пригодность cookies/headers при запуске
     if not check_browser_data_validity(logger):
         logger.warning("Cookies/headers невалидны или отсутствуют. Попытка обновления...")
@@ -567,13 +731,13 @@ def main() -> None:
 
         start_ts = time.time()
         try:
-            scrape_cars(logger)
+            new_car_ids = scrape_cars(logger)
             # После сбора информации обрабатываем детальную информацию
             logger.info("=" * 60)
             logger.info("Начало обработки детальной информации об автомобилях")
             logger.info("=" * 60)
             try:
-                process_cars_details(logger)
+                process_cars_details(new_car_ids, logger)
             except Exception as exc:
                 logger.error("Ошибка при обработке детальной информации: %s", exc, exc_info=True)
         except Exception as exc:

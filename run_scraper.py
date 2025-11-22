@@ -465,7 +465,7 @@ def process_car_detail_full(
             return 0, 0
 
     # Проверяем бренд - если содержит "other", удаляем из cars
-    if manufacturer_english_name and "other" in manufacturer_english_name.lower():
+    if manufacturer_english_name and ("other" in manufacturer_english_name.lower() or 'etc' in manufacturer_english_name.lower()):
         try:
             cursor.execute("DELETE FROM cars WHERE id = ?", (vehicle_id,))
             logger.debug("Удален автомобиль %s с брендом 'other'", vehicle_id)
